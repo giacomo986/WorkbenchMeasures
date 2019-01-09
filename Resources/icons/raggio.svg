@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="68.26667"
+   height="68.26667"
+   id="svg2980"
+   sodipodi:version="0.32"
+   inkscape:version="0.92.1 r15371"
+   sodipodi:docname="Dritto.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   version="1.1"
+   viewBox="0 0 64 64">
+  <defs
+     id="defs2982">
+    <linearGradient
+       id="linearGradient3864">
+      <stop
+         id="stop3866"
+         offset="0"
+         style="stop-color:#71b2f8;stop-opacity:1;" />
+      <stop
+         id="stop3868"
+         offset="1"
+         style="stop-color:#002795;stop-opacity:1;" />
+    </linearGradient>
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 31.999998 : 1"
+       inkscape:vp_y="0 : 999.99995 : 0"
+       inkscape:vp_z="63.999997 : 31.999998 : 1"
+       inkscape:persp3d-origin="31.999998 : 21.333332 : 1"
+       id="perspective2988" />
+    <meshgradient
+       inkscape:collect="always"
+       id="meshgradient4521"
+       gradientUnits="userSpaceOnUse"
+       x="14.999999"
+       y="2.1250031"
+       gradientTransform="translate(0,0.19467234)">
+      <meshrow
+         id="meshrow4523">
+        <meshpatch
+           id="meshpatch4525">
+          <stop
+             path="c 2.5,0  5,0  7.5,0"
+             style="stop-color:#ffffff;stop-opacity:1"
+             id="stop4527" />
+          <stop
+             path="c 0,20  0,40  0,60"
+             style="stop-color:#000080;stop-opacity:1"
+             id="stop4529" />
+          <stop
+             path="c -2.5,0  -5,0  -7.5,0"
+             style="stop-color:#ffffff;stop-opacity:1"
+             id="stop4531" />
+          <stop
+             path="c 0,-20  0,-40  0,-60"
+             style="stop-color:#000080;stop-opacity:1"
+             id="stop4533" />
+        </meshpatch>
+      </meshrow>
+    </meshgradient>
+    <meshgradient
+       y="2.1250033"
+       x="42.187496"
+       gradientUnits="userSpaceOnUse"
+       id="meshgradient6187"
+       inkscape:collect="always">
+      <meshrow
+         id="meshrow6189">
+        <meshpatch
+           id="meshpatch6191">
+          <stop
+             path="c 2.5,0  5,0  7.5,0"
+             style="stop-color:#ffffff;stop-opacity:1"
+             id="stop6193" />
+          <stop
+             path="c 0,20  0,40  0,60"
+             style="stop-color:#000080;stop-opacity:1"
+             id="stop6195" />
+          <stop
+             path="c -2.5,0  -5,0  -7.5,0"
+             style="stop-color:#ffffff;stop-opacity:1"
+             id="stop6197" />
+          <stop
+             path="c 0,-20  0,-40  0,-60"
+             style="stop-color:#000080;stop-opacity:1"
+             id="stop6199" />
+        </meshpatch>
+      </meshrow>
+    </meshgradient>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="9.6315679"
+     inkscape:cx="53.569681"
+     inkscape:cy="28.392297"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:document-units="px"
+     inkscape:grid-bbox="true"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="1912"
+     inkscape:window-y="-8"
+     inkscape:snap-bbox="true"
+     inkscape:snap-nodes="false"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid2991"
+       empspacing="2"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true"
+       originx="0"
+       originy="0"
+       spacingx="1"
+       spacingy="1" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata2985">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>[triplus]</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:title></dc:title>
+        <dc:date>2016-02-26</dc:date>
+        <dc:relation>http://www.freecadweb.org/wiki/index.php?title=Artwork</dc:relation>
+        <dc:publisher>
+          <cc:Agent>
+            <dc:title>FreeCAD</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:identifier>FreeCAD/src/Mod/Part/Gui/Resources/icons/PartWorkbench.svg</dc:identifier>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title>FreeCAD LGPL2+</dc:title>
+          </cc:Agent>
+        </dc:rights>
+        <cc:license>https://www.gnu.org/copyleft/lesser.html</cc:license>
+        <dc:contributor>
+          <cc:Agent>
+            <dc:title>[agryson] Alexander Gryson</dc:title>
+          </cc:Agent>
+        </dc:contributor>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer">
+    <rect
+       style="fill:url(#meshgradient4521);fill-opacity:1;stroke:#0000ff;stroke-width:0.93749995;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4509"
+       width="7.4999995"
+       height="59.999996"
+       x="14.999999"
+       y="2.3196754" />
+    <rect
+       style="fill:url(#meshgradient6187);fill-opacity:1;stroke:#0000ff;stroke-width:0.93749995;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4511"
+       width="7.4999995"
+       height="59.999996"
+       x="42.187496"
+       y="2.1250033" />
+  </g>
+</svg>
