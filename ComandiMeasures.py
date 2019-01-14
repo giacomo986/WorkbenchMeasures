@@ -1,6 +1,7 @@
 import FreeCAD, FreeCADGui
 from FreeCAD import Gui
 from PySide import QtGui, QtCore
+from math import sqrt
 #import Finestra
 
 class SelezionaOggetto():
@@ -54,6 +55,8 @@ class ConfrontaOggettiInFinestra():
         finestraAttiva = True
         
         Finestra = FreeCADGui.PySideUic.loadUi(relazioniFinestraUI)
+        Finestra.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
+        #Finestra.setWindowFlags(Finestra.windowFlags() & ~QtCore.Qt.WindowCloseButtonHint)
         InizializzaFinestra(Finestra)
 		
         Finestra.show()
@@ -102,15 +105,98 @@ class ChiudiConfrontaOggettiInFinestra():
 
 Gui.addCommand('ChiudiConfrontaOggettiInFinestra', ChiudiConfrontaOggettiInFinestra())
 
+class ConfrontaOggettiInWidget():
+    """My new command"""
+
+    def GetResources(self):
+        return {'Pixmap'  : str(FreeCAD.getHomePath() + "Mod/Measures/Resources/icons/ConfrontoFinestra.svg"), # the name of a svg file available in the resources
+                'Accel' : "Shift+S", # a default shortcut (optional)
+                'MenuText': "My New Command",
+                'ToolTip' : "Cerca informazioni sull'oggetto selezionato"}
+
+    def Activated(self):
+        "Do something here"
+        FreeCAD.Console.PrintMessage("Premuto pulsante ConfrontaOggettiInWidget" + "\n")
+		
+        global WidgetAttivo, Widget
+        WidgetAttivo = True
+        
+        Widget = QtGui.QDockWidget()     # create a new dockwidget
+        Widget.setObjectName("widgetDiProva")
+        
+        centralwidget = FreeCADGui.PySideUic.loadUi(relazioniFinestraUI)
+        InizializzaFinestra(centralwidget)
+        Widget.setWidget(centralwidget)
+        
+        FCmw = FreeCADGui.getMainWindow()
+        FCmw.addDockWidget(QtCore.Qt.RightDockWidgetArea, Widget) # add the widget to the main window Right
+		
+        global s3
+
+        s3 = SelObserver()
+        FreeCADGui.Selection.addObserver(s3)
+		
+        return
+
+    def IsActive(self):
+        """Here you can define if the command must be active or not (greyed) if certain conditions
+        are met or not. This function is optional."""
+        return not WidgetAttivo
+
+Gui.addCommand('ConfrontaOggettiInWidget', ConfrontaOggettiInWidget())
+
+class ChiudiConfrontaOggettiInWidget():
+    """My new command"""
+
+    def GetResources(self):
+        return {'Pixmap'  : str(FreeCAD.getHomePath() + "Mod/Measures/Resources/icons/ChiudiConfrontoFinestra.svg"), # the name of a svg file available in the resources
+                'Accel' : "Shift+S", # a default shortcut (optional)
+                'MenuText': "My New Command",
+                'ToolTip' : "Chiudi Widget confronta oggetti"}
+
+    def Activated(self):
+        "Do something here"
+        FreeCAD.Console.PrintMessage("Premuto pulsante ChiudiConfrontaOggettiInWidget" + "\n")
+		
+        global WidgetAttivo, Widget
+        WidgetAttivo = False
+        
+        Widget.hide()
+        
+        FreeCADGui.Selection.removeObserver(s3)
+		
+        return
+
+    def IsActive(self):
+        """Here you can defin
+		e if the command must be active or not (greyed) if certain conditions
+        are met or not. This function is optional."""
+        return WidgetAttivo
+
+Gui.addCommand('ChiudiConfrontaOggettiInWidget', ChiudiConfrontaOggettiInWidget())
+
 def AggiungiElemento(elemento, model):
 	oggetto = QtGui.QStandardItem(elemento)
 	model.clear()
 	model.appendRow(oggetto)
 
+def DefinisciElemento():
+    surfaceFace = Gui.Selection.getSelectionEx()[0].SubObjects[0].Area
+    subObjectLength = Gui.Selection.getSelectionEx()[0].SubObjects[0].Length
+    if (surfaceFace == 0):
+        if (subObjectLength == 0):
+            scritta = "Punto"
+        else:
+            scritta = "Linea"
+    else:
+        scritta = "Superficie"
+    
+    return scritta
+
 def AnalizzaElemento(model):
     model.clear()
     try:
-        SubElement = FreeCADGui.Selection.getSelectionEx()                                        # sub element name with getSelectionEx()
+        #SubElement = FreeCADGui.Selection.getSelectionEx()                                        # sub element name with getSelectionEx()
         subElementName = Gui.Selection.getSelectionEx()[0].SubElementNames[0]                     # sub element name with getSelectionEx()
         scritta = QtGui.QStandardItem("subElementName : " + str(subElementName))
         model.appendRow(scritta)
@@ -139,7 +225,58 @@ def AnalizzaElemento(model):
     except:
         scritta = QtGui.QStandardItem("errore nella selezione dell'oggetto")
         model.appendRow(scritta)
+        
+def AnalizzaRelazioni(model):
+    global primoElemento, secondoElemento, tipoPrimoElemento, tipoSecondoElemento
+    model.clear()
+    
+    scritta = QtGui.QStandardItem("Relazioni tra: " + str(tipoPrimoElemento) + " e " + str(tipoSecondoElemento))
+    
+    model.appendRow(scritta)
+    
+    if (tipoPrimoElemento == "Punto") and (tipoSecondoElemento == "Punto"):
+        scritta = QtGui.QStandardItem("Distanza = " + str(primoElemento.SubObjects[0].Vertexes[0].Point.distanceToPoint(secondoElemento.SubObjects[0].Vertexes[0].Point)))
+        model.appendRow(scritta)
+    
+    elif (tipoPrimoElemento == "Punto") and (tipoSecondoElemento == "Linea"):
+        scritta = QtGui.QStandardItem("Distanza = " + str(primoElemento.SubObjects[0].Vertexes[0].Point.distanceToLine(secondoElemento.SubObjects[0].Vertexes[0].Point, secondoElemento.SubObjects[0].Vertexes[1].Point)))
+        model.appendRow(scritta)
 	
+
+
+
+
+
+
+def DistanzaPuntoRetta(P1, P2):
+    return sqrt((P1.x-P2.x)**2+(P1.y-P2.y)**2+(P1.z-P2.z)**2)
+
+def DistanzaPuntoPiano(P1, P2):
+    return sqrt((P1.x-P2.x)**2+(P1.y-P2.y)**2+(P1.z-P2.z)**2)
+
+def DistanzaRettaRetta(P1, P2):
+    
+    return sqrt((P1.x-P2.x)**2+(P1.y-P2.y)**2+(P1.z-P2.z)**2)
+
+def DistanzaRettaPiano(P1, P2):
+    return sqrt((P1.x-P2.x)**2+(P1.y-P2.y)**2+(P1.z-P2.z)**2)
+
+def DistanzaPianoPiano(P1, P2):
+    return sqrt((P1.x-P2.x)**2+(P1.y-P2.y)**2+(P1.z-P2.z)**2)
+
+def VettoreDirezioneRetta(P1, P2):
+    return sqrt((P1.x-P2.x)**2+(P1.y-P2.y)**2+(P1.z-P2.z)**2)
+
+def VettoreDirezionePiano(P1, P2):
+    return sqrt((P1.x-P2.x)**2+(P1.y-P2.y)**2+(P1.z-P2.z)**2)
+
+
+
+
+
+
+
+
 def InizializzaFinestra(finestra):
 	global modelPrimo, modelSecondo, modelPropPrimo, modelPropSecondo, modelRelazioni
 
@@ -160,7 +297,7 @@ class PannelloSelezionaOggetto:
         # this will create a Qt widget from our ui file
         self.form = FreeCADGui.PySideUic.loadUi(relazioniFinestraUI)
         self.form.setObjectName("Nome di Prova")
-        self.form.setWindowTitle("Sezionona 2 elementi")
+        self.form.setWindowTitle("Seleziona 2 elementi")
 
     def accept(self):
         FreeCAD.Console.PrintMessage("Accettato" + "\n")
@@ -171,6 +308,17 @@ class PannelloSelezionaOggetto:
         FreeCAD.Console.PrintMessage("Rifiutato" + "\n")
         FreeCADGui.Selection.removeObserver(s1)
         FreeCADGui.Control.closeDialog()
+
+class WidgetSelezionaOggetto:
+    def __init__(self):
+        # this will create a Qt widget from our ui file
+        self.form = FreeCADGui.PySideUic.loadUi(relazioniFinestraUI)
+        self.form.setObjectName("Nome di Prova")
+        self.form.setWindowTitle("Seleziona 2 elementi")
+
+    def setupUi(self): 
+        self.centralWidget = QtGui.QWidget(self.form)
+        self.centralWidget.setObjectName("centralWidget")
 
 class SelObserver:
 	def __init__(self):
@@ -186,17 +334,24 @@ class SelObserver:
 		#App.Console.PrintMessage(str(doc)+ "\n")          # Name of the document
 		#FreeCAD.Console.PrintMessage("Aggiunto elemento: " + str(obj) + "\n")
 		if (self.numeroElemento == 0):
-			global modelPrimo, modelPropPrimo
+			global modelPrimo, modelPropPrimo, primoElemento, tipoPrimoElemento
 			AggiungiElemento(str(obj), modelPrimo)
+			primoElemento = FreeCADGui.Selection.getSelectionEx()[0]
+			tipoPrimoElemento = DefinisciElemento()
 			AnalizzaElemento(modelPropPrimo)
 			FreeCAD.Console.PrintMessage("Aggiunto elemento alla prima lista: " + str(sub) + "\n")
 			self.numeroElemento = 1
 		else:
-			global modelSecondo,modelPropSecondo
+			global modelSecondo,modelPropSecondo, secondoElemento, tipoSecondoElemento
 			AggiungiElemento(str(obj), modelSecondo)
+			secondoElemento = FreeCADGui.Selection.getSelectionEx()[0]
+			tipoSecondoElemento = DefinisciElemento()
 			AnalizzaElemento(modelPropSecondo)
 			FreeCAD.Console.PrintMessage("Aggiunto elemento alla seconda lista: " + str(sub) + "\n")
 			self.numeroElemento = 0
+        
+		global modelRelazioni
+		AnalizzaRelazioni(modelRelazioni)
 		#App.Console.PrintMessage(str(sub)+ "\n")          # The part of the object name
 		#App.Console.PrintMessage(str(pnt)+ "\n")          # Coordinates of the object
 		#App.Console.PrintMessage("______"+ "\n")
@@ -215,3 +370,8 @@ class SelObserver:
 
 relazioniFinestraUI = str(FreeCAD.getHomePath() + "Mod/Measures/Resources/ui/relazioniFinestra.ui")
 finestraAttiva = False
+WidgetAttivo = False
+primoElemento = None
+secondoElemento = None
+tipoPrimoElemento = None
+tipoSecondoElemento = None

@@ -41,7 +41,7 @@ class MeasuresWorkbench ( Workbench ):
 	def Initialize(self):
 		"This function is executed when FreeCAD starts"
 		import ComandiMeasures # import here all the needed files that create your FreeCAD commands
-		self.list = ["SelezionaOggetto", "ConfrontaOggettiInFinestra", "ChiudiConfrontaOggettiInFinestra"] # A list of command names created in the line above
+		self.list = ["SelezionaOggetto", "ConfrontaOggettiInFinestra", "ChiudiConfrontaOggettiInFinestra", "ConfrontaOggettiInWidget", "ChiudiConfrontaOggettiInWidget"] # A list of command names created in the line above
 		self.appendToolbar("My Commands", self.list) # creates a new toolbar with your commands
 		
 	def Activated(self):
@@ -55,7 +55,7 @@ class MeasuresWorkbench ( Workbench ):
 	def ContextMenu(self, recipient):
 		"This is executed whenever the user right-clicks on screen"
 		# "recipient" will be either "view" or "tree"
-		self.appendContextMenu("My commands",self.list) # add commands to the context menu
+		self.appendContextMenu("My commands", self.list) # add commands to the context menu
 
 	def GetClassName(self): 
 		# this function is mandatory if this is a full python workbench
