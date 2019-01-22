@@ -1,4 +1,4 @@
-import FreeCAD, FreeCADGui
+import FreeCAD, FreeCADGui, numpy
 from FreeCAD import Gui
 from PySide import QtGui, QtCore
 from math import sqrt
@@ -243,7 +243,9 @@ def AnalizzaRelazioni(model):
         model.appendRow(scritta)
 	
 
-
+    elif (tipoPrimoElemento == "Linea") and (tipoSecondoElemento == "Linea"):
+        scritta = QtGui.QStandardItem("Distanza = " + str(Distanza2RetteNelloSpazio(primoElemento.SubObjects[0].Vertexes[0].Point, primoElemento.SubObjects[0].Vertexes[1].Point, secondoElemento.SubObjects[0].Vertexes[0].Point, secondoElemento.SubObjects[0].Vertexes[1].Point)))
+        model.appendRow(scritta)
 
 
 
@@ -254,20 +256,50 @@ def DistanzaPuntoRetta(P1, P2):
 def DistanzaPuntoPiano(P1, P2):
     return sqrt((P1.x-P2.x)**2+(P1.y-P2.y)**2+(P1.z-P2.z)**2)
 
-def DistanzaRettaRetta(P1, P2):
-    
-    return sqrt((P1.x-P2.x)**2+(P1.y-P2.y)**2+(P1.z-P2.z)**2)
+def Distanza2RetteNelloSpazio(a0,a1,b0,b1):
+
+    ''' Given two lines defined by numpy.array pairs (a0,a1,b0,b1)
+        Return the closest points on each segment and their distance
+    '''
+
+    # Calculate denomitator
+    A = a1 - a0
+    B = b1 - b0
+    magA = numpy.linalg.norm(A)
+    magB = numpy.linalg.norm(B)
+
+    _A = A / magA
+    _B = B / magB
+
+    cross = numpy.cross(_A, _B);
+    denom = numpy.linalg.norm(cross)**2
+
+    # If lines are parallel (denom=0) test if lines overlap.
+    # If they don't overlap then there is a closest point solution.
+    # If they do overlap, there are infinite closest positions, but there is a closest distance
+    if not denom:
+        d0 = numpy.dot(_A,(b0-a0))
+
+        # Segments overlap, return distance between parallel segments
+        return numpy.linalg.norm(((d0*_A)+a0)-b0)
+
+    # Lines criss-cross: Calculate the projected closest points
+    t = (b0 - a0);
+    detA = numpy.linalg.det([t, _B, cross])
+    detB = numpy.linalg.det([t, _A, cross])
+
+    t0 = detA/denom;
+    t1 = detB/denom;
+
+    pA = a0 + (_A * t0) # Projected closest point on segment A
+    pB = b0 + (_B * t1) # Projected closest point on segment B
+
+    return numpy.linalg.norm(pA-pB)
 
 def DistanzaRettaPiano(P1, P2):
     return sqrt((P1.x-P2.x)**2+(P1.y-P2.y)**2+(P1.z-P2.z)**2)
 
 def DistanzaPianoPiano(P1, P2):
-    return sqrt((P1.x-P2.x)**2+(P1.y-P2.y)**2+(P1.z-P2.z)**2)
-
-def VettoreDirezioneRetta(P1, P2):
-    return sqrt((P1.x-P2.x)**2+(P1.y-P2.y)**2+(P1.z-P2.z)**2)
-
-def VettoreDirezionePiano(P1, P2):
     return sqrt((P1.x-P2.x)**2+(P1.y-P2.y)**2+(P1.z-P2.z)**2)
 
 
