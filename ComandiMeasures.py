@@ -239,65 +239,58 @@ def AnalizzaRelazioni(model):
         model.appendRow(scritta)
     
     elif (tipoPrimoElemento == "Punto") and (tipoSecondoElemento == "Linea"):
-        scritta = QtGui.QStandardItem("Distanza = " + str(primoElemento.SubObjects[0].Vertexes[0].Point.distanceToLine(secondoElemento.SubObjects[0].Vertexes[0].Point, secondoElemento.SubObjects[0].Vertexes[1].Point)))
+        scritta = QtGui.QStandardItem("Distanza = " + str(DistanzaPuntoRetta(secondoElemento.SubObjects[0].Vertexes[0].Point, secondoElemento.SubObjects[0].Vertexes[1].Point, primoElemento.SubObjects[0].Vertexes[0].Point)))
         model.appendRow(scritta)
 	
-
+    elif (tipoPrimoElemento == "Linea") and (tipoSecondoElemento == "Punto"):
+        scritta = QtGui.QStandardItem("Distanza = " + str(DistanzaPuntoRetta(primoElemento.SubObjects[0].Vertexes[0].Point, primoElemento.SubObjects[0].Vertexes[1].Point, secondoElemento.SubObjects[0].Vertexes[0].Point)))
+        model.appendRow(scritta)
+	
     elif (tipoPrimoElemento == "Linea") and (tipoSecondoElemento == "Linea"):
         scritta = QtGui.QStandardItem("Distanza = " + str(Distanza2RetteNelloSpazio(primoElemento.SubObjects[0].Vertexes[0].Point, primoElemento.SubObjects[0].Vertexes[1].Point, secondoElemento.SubObjects[0].Vertexes[0].Point, secondoElemento.SubObjects[0].Vertexes[1].Point)))
         model.appendRow(scritta)
+        diff1 = primoElemento.SubObjects[0].Vertexes[0].Point - primoElemento.SubObjects[0].Vertexes[1].Point
+        diff2 = secondoElemento.SubObjects[0].Vertexes[0].Point - secondoElemento.SubObjects[0].Vertexes[1].Point
+        scritta = QtGui.QStandardItem("Angolo = " + str(AngoloTra2VettoriNelloSpazio(diff1, diff2)))
+        model.appendRow(scritta)
+
+    elif (tipoPrimoElemento == "Superficie") and (tipoSecondoElemento == "Superficie"):
+        scritta = QtGui.QStandardItem("Angolo = " + str(AngoloTra2VettoriNelloSpazio(primoElemento.SubObjects[0].Faces[0].normalAt(0,0), secondoElemento.SubObjects[0].Faces[0].normalAt(0,0))))
+        model.appendRow(scritta)
 
 
-
-
-def DistanzaPuntoRetta(P1, P2):
-    return sqrt((P1.x-P2.x)**2+(P1.y-P2.y)**2+(P1.z-P2.z)**2)
+def DistanzaPuntoRetta(A, B, P):
+    "Distanza tra una retta passante per i punti A e B un il punto P"
+    "Fonte: https://math.stackexchange.com/questions/1905533/find-perpendicular-distance-from-point-to-line-in-3d"
+    d = numpy.linalg.norm(numpy.cross(B - P, B - A)) / numpy.linalg.norm(B - A)
+    return d
 
 def DistanzaPuntoPiano(P1, P2):
     return sqrt((P1.x-P2.x)**2+(P1.y-P2.y)**2+(P1.z-P2.z)**2)
 
-def Distanza2RetteNelloSpazio(a0,a1,b0,b1):
+def Distanza2RetteNelloSpazio(A0, A1, B0, B1):
+    if (numpy.linalg.norm(numpy.cross(A1 - A0, B1 - B0)) != 0):
+        d =  numpy.dot(B0 - A0, numpy.cross(A1 - A0, B1 - B0)) / numpy.linalg.norm(numpy.cross(A1 - A0, B1 - B0))
+    else:
+        d = DistanzaPuntoRetta(A0, A1, B0)
+    return d
 
-    ''' Given two lines defined by numpy.array pairs (a0,a1,b0,b1)
-        Return the closest points on each segment and their distance
+def AngoloTra2VettoriNelloSpazio(V1, V2):
     '''
-
-    # Calculate denomitator
-    A = a1 - a0
-    B = b1 - b0
-    magA = numpy.linalg.norm(A)
-    magB = numpy.linalg.norm(B)
-
-    _A = A / magA
-    _B = B / magB
-
-    cross = numpy.cross(_A, _B);
-    denom = numpy.linalg.norm(cross)**2
-
-    # If lines are parallel (denom=0) test if lines overlap.
-    # If they don't overlap then there is a closest point solution.
-    # If they do overlap, there are infinite closest positions, but there is a closest distance
-    if not denom:
-        d0 = numpy.dot(_A,(b0-a0))
-
-        # Segments overlap, return distance between parallel segments
-        return numpy.linalg.norm(((d0*_A)+a0)-b0)
-
-    # Lines criss-cross: Calculate the projected closest points
-    t = (b0 - a0);
-    detA = numpy.linalg.det([t, _B, cross])
-    detB = numpy.linalg.det([t, _A, cross])
-
-    t0 = detA/denom;
-    t1 = detB/denom;
-
-    pA = a0 + (_A * t0) # Projected closest point on segment A
-    pB = b0 + (_B * t1) # Projected closest point on segment B
-
-    return numpy.linalg.norm(pA-pB)
-
-def DistanzaRettaPiano(P1, P2):
-    return sqrt((P1.x-P2.x)**2+(P1.y-P2.y)**2+(P1.z-P2.z)**2)
+    restituisce l'angolo formato da due vettori. Fonte algoritmo: https://www.youmath.it/lezioni/algebra-lineare/matrici-e-vettori/882-norma-e-prodotto-scalare.html
+    '''
+    
+    ProdottoVettoriale = numpy.vdot(V1, V2)
+    normV1 = numpy.linalg.norm(V1)
+    normV2 = numpy.linalg.norm(V2)
+    
+    cosenoAngolo = ProdottoVettoriale / (normV1 * normV2)
+    
+    AngoloRadianti = (numpy.pi/2) - numpy.arcsin(cosenoAngolo)
+    
+    AngoloGradi = AngoloRadianti *180/numpy.pi
+    
+    return numpy.round(AngoloGradi, 3)
 
 def DistanzaPianoPiano(P1, P2):
     return sqrt((P1.x-P2.x)**2+(P1.y-P2.y)**2+(P1.z-P2.z)**2)
