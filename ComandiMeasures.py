@@ -253,8 +253,18 @@ def AnalizzaRelazioni(model):
         diff2 = secondoElemento.SubObjects[0].Vertexes[0].Point - secondoElemento.SubObjects[0].Vertexes[1].Point
         scritta = QtGui.QStandardItem("Angolo = " + str(AngoloTra2VettoriNelloSpazio(diff1, diff2)))
         model.appendRow(scritta)
+        
+    elif (tipoPrimoElemento == "Superficie") and (tipoSecondoElemento == "Punto"):
+        scritta = QtGui.QStandardItem("Distanza = " + str(DistanzaPuntoPiano(primoElemento.SubObjects[0].Faces[0].normalAt(0,0), primoElemento.SubObjects[0].Vertexes[0].Point, secondoElemento.SubObjects[0].Vertexes[0].Point)))
+        model.appendRow(scritta)
+    
+    elif (tipoPrimoElemento == "Punto") and (tipoSecondoElemento == "Superficie"):
+        scritta = QtGui.QStandardItem("Distanza = " + str(DistanzaPuntoPiano(secondoElemento.SubObjects[0].Faces[0].normalAt(0,0), secondoElemento.SubObjects[0].Vertexes[0].Point, primoElemento.SubObjects[0].Vertexes[0].Point)))
+        model.appendRow(scritta)
 
     elif (tipoPrimoElemento == "Superficie") and (tipoSecondoElemento == "Superficie"):
+        scritta = QtGui.QStandardItem("Angolo = " + str(DistanzaPianoPiano(primoElemento.SubObjects[0].Faces[0].normalAt(0,0), primoElemento.SubObjects[0].Vertexes[0].Point, secondoElemento.SubObjects[0].Faces[0].normalAt(0,0), secondoElemento.SubObjects[0].Vertexes[0].Point)))
+        model.appendRow(scritta)
         scritta = QtGui.QStandardItem("Angolo = " + str(AngoloTra2VettoriNelloSpazio(primoElemento.SubObjects[0].Faces[0].normalAt(0,0), secondoElemento.SubObjects[0].Faces[0].normalAt(0,0))))
         model.appendRow(scritta)
 
@@ -265,8 +275,11 @@ def DistanzaPuntoRetta(A, B, P):
     d = numpy.linalg.norm(numpy.cross(B - P, B - A)) / numpy.linalg.norm(B - A)
     return d
 
-def DistanzaPuntoPiano(P1, P2):
-    return sqrt((P1.x-P2.x)**2+(P1.y-P2.y)**2+(P1.z-P2.z)**2)
+def DistanzaPuntoPiano(V, A, P):
+    "Distanza tra un piano di vettore V passante per A e un punto P"
+    "Fonte: http://mathworld.wolfram.com/Point-PlaneDistance.html"
+    d = numpy.dot(V, P-A) / numpy.linalg.norm(V)
+    return d
 
 def Distanza2RetteNelloSpazio(A0, A1, B0, B1):
     if (numpy.linalg.norm(numpy.cross(A1 - A0, B1 - B0)) != 0):
@@ -276,9 +289,7 @@ def Distanza2RetteNelloSpazio(A0, A1, B0, B1):
     return d
 
 def AngoloTra2VettoriNelloSpazio(V1, V2):
-    '''
-    restituisce l'angolo formato da due vettori. Fonte algoritmo: https://www.youmath.it/lezioni/algebra-lineare/matrici-e-vettori/882-norma-e-prodotto-scalare.html
-    '''
+    "restituisce l'angolo formato da due vettori. Fonte algoritmo: https://www.youmath.it/lezioni/algebra-lineare/matrici-e-vettori/882-norma-e-prodotto-scalare.html"
     
     ProdottoVettoriale = numpy.vdot(V1, V2)
     normV1 = numpy.linalg.norm(V1)
@@ -292,8 +303,12 @@ def AngoloTra2VettoriNelloSpazio(V1, V2):
     
     return numpy.round(AngoloGradi, 3)
 
-def DistanzaPianoPiano(P1, P2):
-    return sqrt((P1.x-P2.x)**2+(P1.y-P2.y)**2+(P1.z-P2.z)**2)
+def DistanzaPianoPiano(V1, A1, V2, A2):
+    if (numpy.linalg.norm(numpy.cross(V1, V2)) != 0): # Se i vettori non sono paralleli
+        d =  0
+    else:
+        d = DistanzaPuntoPiano(V1, A1, A2)
+    return d
 
 
 
