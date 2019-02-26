@@ -5,4 +5,4 @@ Workbench per FreeCAD per confrontare 2 elementi tra di loro:
 - ecc.
 
 # Installazione
- Per intallare la workbench basta copiare la cartella Measures/ all'interno della martella mod/ di FreeCAD
+ Per intallare la workbench basta copiare la cartella WorkbenchMeasures/ all'interno della cartella mod/ di FreeCAD e rinominare la certella WorkbenchMeasures/ in Measures/
