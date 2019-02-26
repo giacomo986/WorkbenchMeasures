@@ -23,4 +23,4 @@
 #*                                                                         *
 #***************************************************************************/
 
-print("Sto avviando la mod delle misure" )
+print("Sto avviando la mod delle misure")
